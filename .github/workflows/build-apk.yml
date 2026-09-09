@@ -11,26 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Checkout source
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build web app
+      - name: Build React app
         run: npm run build
 
       - name: Install Capacitor
         run: npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
 
-      - name: Initialize Capacitor
-        run: npx cap init "Madina Mart" "com.madinamart.app" --web-dir=dist
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.madinamart.app',
+            appName: 'Madina Mart',
+            webDir: 'dist',
+            bundledWebRuntime: false
+          };
+
+          export default config;
+          EOF
 
       - name: Add Android platform
         run: npx cap add android
@@ -38,13 +49,13 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Setup Java
-        uses: actions/setup-java@v5
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Build APK
+      - name: Build Debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
 
@@ -53,3 +64,4 @@ jobs:
         with:
           name: Madina-Mart-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
