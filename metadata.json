@@ -1,0 +1,6 @@
+{
+  "name": "Madina Mart",
+  "description": "Your Local Shopping Store - Online shopping and reselling marketplace for Grocery, Electronics, Fashion, Oils & Personal Care with Cash on Delivery and Order Tracking.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
